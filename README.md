@@ -41,18 +41,18 @@ A production-ready **Express 5 REST API** (Node.js, ES modules) with JWT-based a
 
 ## Tech Stack
 
-| Layer        | Technology                    |
-| ------------ | ----------------------------- |
-| Runtime      | Node.js 22 (ES modules)       |
-| Framework    | Express 5                     |
-| Database     | Neon PostgreSQL               |
-| ORM          | Drizzle ORM                   |
-| Auth         | JWT (jsonwebtoken), bcrypt    |
-| Security     | Arcjet, Helmet, CORS          |
-| Validation   | Zod                           |
-| Logging      | Winston, Morgan              |
-| Testing      | Jest, Supertest               |
-| Lint/Format  | ESLint, Prettier              |
+| Layer       | Technology                 |
+| ----------- | -------------------------- |
+| Runtime     | Node.js 22 (ES modules)    |
+| Framework   | Express 5                  |
+| Database    | Neon PostgreSQL            |
+| ORM         | Drizzle ORM                |
+| Auth        | JWT (jsonwebtoken), bcrypt |
+| Security    | Arcjet, Helmet, CORS       |
+| Validation  | Zod                        |
+| Logging     | Winston, Morgan            |
+| Testing     | Jest, Supertest            |
+| Lint/Format | ESLint, Prettier           |
 
 ---
 
@@ -183,18 +183,18 @@ Requires `.env.production` and Docker. Starts app only; uses Neon Cloud via `DAT
 
 ## Environment Variables
 
-| Variable         | Required | Default     | Description |
-| ---------------- | -------- | ----------- | ----------- |
-| `NODE_ENV`       | No       | —           | `development` or `production`. Affects Neon client config and console logging. |
-| `PORT`           | No       | `3000`      | Server port. |
-| `DATABASE_URL`   | Yes      | —           | Neon PostgreSQL connection string. Use pooled URL in production. |
-| `ARCJET_KEY`     | Yes      | —           | Arcjet API key (bot/shield/rate limit). |
-| `JWT_SECRET`     | No*      | (in-code default) | Secret for JWT signing. **Must be set in production.** |
-| `LOG_LEVEL`      | No       | `info`      | Winston log level (e.g. `debug`, `info`, `warn`, `error`). |
-| `NEON_API_KEY`   | For Neon Local | —     | Neon API key (Docker dev with Neon Local). |
-| `NEON_PROJECT_ID`| For Neon Local | —     | Neon project ID (Docker dev with Neon Local). |
+| Variable          | Required       | Default           | Description                                                                    |
+| ----------------- | -------------- | ----------------- | ------------------------------------------------------------------------------ |
+| `NODE_ENV`        | No             | —                 | `development` or `production`. Affects Neon client config and console logging. |
+| `PORT`            | No             | `3000`            | Server port.                                                                   |
+| `DATABASE_URL`    | Yes            | —                 | Neon PostgreSQL connection string. Use pooled URL in production.               |
+| `ARCJET_KEY`      | Yes            | —                 | Arcjet API key (bot/shield/rate limit).                                        |
+| `JWT_SECRET`      | No\*           | (in-code default) | Secret for JWT signing. **Must be set in production.**                         |
+| `LOG_LEVEL`       | No             | `info`            | Winston log level (e.g. `debug`, `info`, `warn`, `error`).                     |
+| `NEON_API_KEY`    | For Neon Local | —                 | Neon API key (Docker dev with Neon Local).                                     |
+| `NEON_PROJECT_ID` | For Neon Local | —                 | Neon project ID (Docker dev with Neon Local).                                  |
 
-*If `JWT_SECRET` is missing, the app falls back to a default in code; do not rely on this in production.
+\*If `JWT_SECRET` is missing, the app falls back to a default in code; do not rely on this in production.
 
 ---
 
@@ -204,21 +204,21 @@ Base URL: `http://localhost:3000` (or your `PORT`).
 
 ### Public
 
-| Method | Path       | Description |
-| ------ | ---------- | ----------- |
-| GET    | `/`        | Simple greeting: `Hello from Acquisitions!` |
-| GET    | `/health`  | Health check: `{ status, timestamp, uptime }` |
-| GET    | `/api`     | API message: `{ message: "Acquisition API is running!" }` |
+| Method | Path      | Description                                               |
+| ------ | --------- | --------------------------------------------------------- |
+| GET    | `/`       | Simple greeting: `Hello from Acquisitions!`               |
+| GET    | `/health` | Health check: `{ status, timestamp, uptime }`             |
+| GET    | `/api`    | API message: `{ message: "Acquisition API is running!" }` |
 
 ### Auth (`/api/auth`)
 
 All auth responses set or clear the `token` httpOnly cookie. Send cookies with subsequent requests for protected routes.
 
-| Method | Path         | Body (JSON) | Description |
-| ------ | ------------ | ----------- | ----------- |
-| POST   | `/api/auth/sign-up` | `{ name, email, password, role? }` | Register. `role`: `"user"` \| `"admin"` (default `"user"`). Returns `201` and user (no password). |
-| POST   | `/api/auth/sign-in` | `{ email, password }` | Sign in. Returns `200` and user (no password). |
-| POST   | `/api/auth/sign-out` | — | Clear auth cookie. Returns `200`. |
+| Method | Path                 | Body (JSON)                        | Description                                                                                       |
+| ------ | -------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------- |
+| POST   | `/api/auth/sign-up`  | `{ name, email, password, role? }` | Register. `role`: `"user"` \| `"admin"` (default `"user"`). Returns `201` and user (no password). |
+| POST   | `/api/auth/sign-in`  | `{ email, password }`              | Sign in. Returns `200` and user (no password).                                                    |
+| POST   | `/api/auth/sign-out` | —                                  | Clear auth cookie. Returns `200`.                                                                 |
 
 **Validation (sign-up):** `name` 2–255 chars; `email` valid email, max 255; `password` 6–128 chars; `role` optional, `user` or `admin`.  
 **Validation (sign-in):** `email` valid; `password` non-empty.
@@ -229,12 +229,12 @@ All auth responses set or clear the `token` httpOnly cookie. Send cookies with s
 
 Requires valid JWT in `token` cookie (set by sign-in/sign-up). Role rules: users can read/update/delete only their own record; admins can do all. Only admins can change `role`.
 
-| Method | Path              | Body (JSON) | Description |
-| ------ | ----------------- | ----------- | ----------- |
-| GET    | `/api/users`      | —           | List all users. Returns `{ message, users, count }`. |
-| GET    | `/api/users/:id`  | —           | Get user by id. `:id` positive integer. |
-| PUT    | `/api/users/:id`  | `{ name?, email?, password?, role? }` | Update user. Role change only if admin. |
-| DELETE | `/api/users/:id`  | —           | Delete user (self or admin). |
+| Method | Path             | Body (JSON)                           | Description                                          |
+| ------ | ---------------- | ------------------------------------- | ---------------------------------------------------- |
+| GET    | `/api/users`     | —                                     | List all users. Returns `{ message, users, count }`. |
+| GET    | `/api/users/:id` | —                                     | Get user by id. `:id` positive integer.              |
+| PUT    | `/api/users/:id` | `{ name?, email?, password?, role? }` | Update user. Role change only if admin.              |
+| DELETE | `/api/users/:id` | —                                     | Delete user (self or admin).                         |
 
 **Validation (params):** `id` coerce to positive integer.  
 **Validation (update body):** `name` 2–255; `email` valid, max 255; `password` 6–128; `role` `user` \| `admin`. All fields optional.
@@ -250,20 +250,20 @@ Requires valid JWT in `token` cookie (set by sign-in/sign-up). Role rules: users
 
 ## Scripts
 
-| Command           | Description |
-| ----------------- | ----------- |
-| `npm run dev`     | Start with `node --watch` (needs `DATABASE_URL`, `ARCJET_KEY`). |
-| `npm start`       | Start once: `node src/index.js`. |
-| `npm run dev:docker` | Dev stack: Neon Local + app (needs `.env.development`). |
-| `npm run prod:docker` | Prod stack: app only (needs `.env.production`). |
-| `npm run lint`    | ESLint check. |
-| `npm run lint:fix`| ESLint autofix. |
-| `npm run format`  | Prettier write. |
-| `npm run format:check` | Prettier check. |
-| `npm run db:generate` | Drizzle: generate migration from `src/models/*.js`. |
-| `npm run db:migrate`  | Drizzle: apply migrations. |
-| `npm run db:studio`   | Drizzle Studio GUI. |
-| `npm test`        | Jest (Supertest) with `NODE_OPTIONS=--experimental-vm-modules`. |
+| Command                | Description                                                     |
+| ---------------------- | --------------------------------------------------------------- |
+| `npm run dev`          | Start with `node --watch` (needs `DATABASE_URL`, `ARCJET_KEY`). |
+| `npm start`            | Start once: `node src/index.js`.                                |
+| `npm run dev:docker`   | Dev stack: Neon Local + app (needs `.env.development`).         |
+| `npm run prod:docker`  | Prod stack: app only (needs `.env.production`).                 |
+| `npm run lint`         | ESLint check.                                                   |
+| `npm run lint:fix`     | ESLint autofix.                                                 |
+| `npm run format`       | Prettier write.                                                 |
+| `npm run format:check` | Prettier check.                                                 |
+| `npm run db:generate`  | Drizzle: generate migration from `src/models/*.js`.             |
+| `npm run db:migrate`   | Drizzle: apply migrations.                                      |
+| `npm run db:studio`    | Drizzle Studio GUI.                                             |
+| `npm test`             | Jest (Supertest) with `NODE_OPTIONS=--experimental-vm-modules`. |
 
 ---
 
